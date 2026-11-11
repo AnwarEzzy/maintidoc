@@ -1,10 +1,24 @@
-import sys
+import argparse
 from pathlib import Path
 
 from llama_index.readers.file import PyMuPDFReader
 
 
-pdf_path = Path(sys.argv[1]).resolve()
+parser = argparse.ArgumentParser(
+    description="Extract text and page metadata from a PDF."
+)
+
+parser.add_argument(
+    "pdf_path",
+    type=Path,
+    help="Path to the PDF document.",
+)
+
+args = parser.parse_args()
+pdf_path = args.pdf_path.resolve()
+
+if not pdf_path.is_file():
+    parser.error(f"PDF file not found: {pdf_path}")
 
 reader = PyMuPDFReader()
 pages = reader.load_data(file_path=pdf_path)
