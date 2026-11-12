@@ -22,5 +22,33 @@ services:
       timeout: 5s
       retries: 10
 
+  embeddings:
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9
+
+    command:
+      - "--model-id"
+      - "BAAI/bge-m3"
+      - "--pooling"
+      - "cls"
+      - "--dtype"
+      - "float32"
+      - "--port"
+      - "80"
+      - "--huggingface-hub-cache"
+      - "/data"
+      - "--max-batch-tokens"
+      - "1024"
+      - "--max-batch-requests"
+      - "1"
+      - "--max-client-batch-size"
+      - "1"
+
+    ports:
+      - "127.0.0.1:8080:80"
+
+    volumes:
+      - bge_model_cache:/data
+
 volumes:
   postgres_data:
+  bge_model_cache:
