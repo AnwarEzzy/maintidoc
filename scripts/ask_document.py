@@ -25,12 +25,24 @@ Rules:
 - Cite every factual claim using labels such as [S1] or [S2].
 - Use only source IDs that were supplied.
 - Do not invent facts, references, or page numbers.
+- Sources marked "visual_description" are automatically generated
+  descriptions of images. They may contain mistakes.
+- When using a visual description, explicitly attribute the information
+  to the automatic description. Do not claim you inspected the image.
+- Prefer original PDF text for technical facts and numerical values.
+- An image path is a reference, not evidence of the image's content.
+- If sources conflict and PDF text does not resolve the conflict,
+  explain the uncertainty.
 - If the excerpts do not answer the question, return exactly:
 INSUFFICIENT_CONTEXT
 """.strip()
 
 
-def answer_question(question: str, top_k: int = 2) -> dict:
+def answer_question(
+    question: str,
+    top_k: int = 2,
+    descriptions_only: bool = False,
+) -> dict:
     question = question.strip()
 
     if not question:
@@ -39,7 +51,11 @@ def answer_question(question: str, top_k: int = 2) -> dict:
     if not 1 <= top_k <= 3:
         raise ValueError("Use between 1 and 3 passages for this first version.")
 
-    result = search_chunks(question, top_k)
+    result = search_chunks(
+        question,
+        top_k,
+        descriptions_only=descriptions_only,
+    )
     nodes = result.nodes or []
 
     if not nodes:
@@ -48,12 +64,22 @@ def answer_question(question: str, top_k: int = 2) -> dict:
     sources = []
 
     for index, node in enumerate(nodes, start=1):
+        metadata = node.metadata
+
         sources.append(
             {
                 "id": f"S{index}",
-                "document": node.metadata["document"],
-                "page": node.metadata["page"],
-                "chunk_index": node.metadata["chunk_index"],
+                "document": metadata["document"],
+                "page": metadata["page"],
+                "chunk_index": metadata["chunk_index"],
+                "source_type": metadata.get(
+                    "source_type",
+                    "pdf_text",
+                ),
+                "description_status": metadata.get(
+                    "description_status"
+                ),
+                "image_path": metadata.get("image_path"),
                 "text": node.text,
             }
         )
@@ -148,11 +174,19 @@ def main():
         default=2,
         help="Number of passages to retrieve (default: 2).",
     )
-
+    parser.add_argument(
+        "--visual-descriptions",
+        action="store_true",
+        help="Search only automatically generated visual descriptions.",
+    )
     args = parser.parse_args()
 
     try:
-        result = answer_question(args.question, args.top_k)
+        result = answer_question(
+            args.question,
+            args.top_k,
+            descriptions_only=args.visual_descriptions,
+        )
     except (ValueError, RuntimeError) as error:
         parser.exit(1, f"Error: {error}\n")
 
@@ -161,12 +195,17 @@ def main():
 
     if result["sources"]:
         print("\nSources:")
+
         for source in result["sources"]:
             print(
                 f"[{source['id']}] {source['document']} "
                 f"- page {source['page']} "
                 f"- chunk {source['chunk_index']}"
             )
+
+            if source["source_type"] == "visual_description":
+                print("  Type: description automatique d'un visuel")
+                print(f"  Image: {source['image_path']}")
 
 
 if __name__ == "__main__":

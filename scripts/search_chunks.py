@@ -9,6 +9,8 @@ from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from llama_index.core.vector_stores import (
+    MetadataFilter,
+    MetadataFilters,
     VectorStoreQuery,
     VectorStoreQueryResult,
 )
@@ -23,6 +25,7 @@ EMBEDDING_URL = "http://127.0.0.1:8080/embed"
 def search_chunks(
     question: str,
     top_k: int = 3,
+    descriptions_only: bool = False,
 ) -> VectorStoreQueryResult:
     question = question.strip()
 
@@ -119,9 +122,22 @@ def search_chunks(
     )
 
     try:
+        filters = None
+
+        if descriptions_only:
+            filters = MetadataFilters(
+                filters=[
+                    MetadataFilter(
+                        key="source_type",
+                        value="visual_description",
+                    )
+                ]
+            )
+
         query = VectorStoreQuery(
             query_embedding=question_vector,
             similarity_top_k=top_k,
+            filters=filters,
         )
         return vector_store.query(query)
     finally:
