@@ -46,6 +46,7 @@ def load_clip():
 def search_visuals(
     question: str,
     top_k: int = 3,
+    document: str | None = None,
 ) -> VectorStoreQueryResult:
     question = question.strip()
 
@@ -121,21 +122,17 @@ def search_visuals(
     )
 
     try:
+        conditions = [
+            MetadataFilter(key="embedding_model", value=EMBEDDING_MODEL),
+            MetadataFilter(key="preprocessing", value=PREPROCESSING),
+        ]
+        if document:
+            conditions.append(MetadataFilter(key="document", value=document))
+
         query = VectorStoreQuery(
             query_embedding=question_vector,
             similarity_top_k=top_k,
-            filters=MetadataFilters(
-                filters=[
-                    MetadataFilter(
-                        key="embedding_model",
-                        value=EMBEDDING_MODEL,
-                    ),
-                    MetadataFilter(
-                        key="preprocessing",
-                        value=PREPROCESSING,
-                    ),
-                ]
-            ),
+            filters=MetadataFilters(filters=conditions),
         )
 
         return vector_store.query(query)

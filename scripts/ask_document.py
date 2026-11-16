@@ -31,6 +31,9 @@ Rules:
   to the automatic description. Do not claim you inspected the image.
 - Prefer original PDF text for technical facts and numerical values.
 - An image path is a reference, not evidence of the image's content.
+- For a source marked "visual_reference", you may only present it as a
+  candidate visual found at the given page. Its contents are unconfirmed.
+- Do not include local filesystem paths in the answer; cite source IDs instead.
 - If sources conflict and PDF text does not resolve the conflict,
   explain the uncertainty.
 - If the excerpts do not answer the question, return exactly:

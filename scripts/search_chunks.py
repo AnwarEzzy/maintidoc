@@ -9,6 +9,8 @@ from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from llama_index.core.vector_stores import (
+    FilterCondition,
+    FilterOperator,
     MetadataFilter,
     MetadataFilters,
     VectorStoreQuery,
@@ -26,6 +28,8 @@ def search_chunks(
     question: str,
     top_k: int = 3,
     descriptions_only: bool = False,
+    document: str | None = None,
+    text_only: bool = False,
 ) -> VectorStoreQueryResult:
     question = question.strip()
 
@@ -34,6 +38,8 @@ def search_chunks(
 
     if top_k < 1:
         raise ValueError("top_k must be at least 1.")
+    if descriptions_only and text_only:
+        raise ValueError("Choose descriptions_only or text_only, not both.")
 
     project_root = Path(__file__).resolve().parents[1]
     load_dotenv(project_root / ".env")
@@ -122,22 +128,25 @@ def search_chunks(
     )
 
     try:
-        filters = None
+        conditions = []
 
         if descriptions_only:
-            filters = MetadataFilters(
-                filters=[
-                    MetadataFilter(
-                        key="source_type",
-                        value="visual_description",
-                    )
-                ]
+            conditions.append(
+                MetadataFilter(key="source_type", value="visual_description")
             )
+        if text_only:
+            # Older PDF nodes have no source_type; new ones may declare it.
+            conditions.append(MetadataFilters(filters=[
+                MetadataFilter(key="source_type", value="pdf_text"),
+                MetadataFilter(key="source_type", value=None, operator=FilterOperator.IS_EMPTY),
+            ], condition=FilterCondition.OR))
+        if document:
+            conditions.append(MetadataFilter(key="document", value=document))
 
         query = VectorStoreQuery(
             query_embedding=question_vector,
             similarity_top_k=top_k,
-            filters=filters,
+            filters=MetadataFilters(filters=conditions) if conditions else None,
         )
         return vector_store.query(query)
     finally:
