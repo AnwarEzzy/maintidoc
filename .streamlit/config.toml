@@ -1,0 +1,13 @@
+[server]
+address = "127.0.0.1"
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#147D64"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#EEF3F6"
+textColor = "#142C3A"
+font = "sans serif"
