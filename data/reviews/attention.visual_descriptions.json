@@ -1,0 +1,41 @@
+{
+  "source_document": "attention is all you need.pdf",
+  "reviews": [
+    {
+      "visual_id": "2354fe799ec860190d45fd37baf5d84dd643ed36c1ba8cff9d98b3e5a3f91c38",
+      "image_path": "data/processed/attention is all you need/images/page_003_image_001.png",
+      "description_status": "pending",
+      "description": "Schéma de l'architecture Transformer organisé en deux colonnes de blocs reliés par des flèches. Les libellés visibles comprennent Input Embedding, Output Embedding, Positional Encoding, Multi-Head Attention, Masked Multi-Head Attention, Feed Forward et Add & Norm. La colonne de droite se termine par Linear puis Softmax. Les groupes de blocs portent l'annotation N×."
+    },
+    {
+      "visual_id": "b910cef738e4a6259c7dde3ad7cdf653971c136358680949c96eef55346da295",
+      "image_path": "data/processed/attention is all you need/images/page_004_image_001.png",
+      "description_status": "pending",
+      "description": "Schéma de l'attention multi-têtes. Les entrées Q, K et V passent par des projections Linear représentées en plusieurs exemplaires. Les blocs Scaled Dot-Product Attention alimentent Concat, puis un bloc Linear situé en haut du schéma."
+    },
+    {
+      "visual_id": "30433a2c08c2a69699003cc566d90d64a50ae10f10ca0822eb3ead06b84fca16",
+      "image_path": "data/processed/attention is all you need/images/page_004_image_002.png",
+      "description_status": "pending",
+      "description": "Schéma de l'attention par produit scalaire mis à l'échelle. Q et K alimentent le bloc MatMul inférieur. Le flux passe ensuite par Scale, Mask (opt.) et SoftMax. Le résultat rejoint le bloc MatMul supérieur, qui reçoit aussi V."
+    },
+    {
+      "visual_id": "b820e1ca7448363bbe50fa6ff5423b6609d524bce853354bd98ab38e753c686a",
+      "image_path": "data/processed/attention is all you need/tables/page_006_table_001.png",
+      "description_status": "pending",
+      "description": "Tableau comparant quatre types de couches : Self-Attention, Recurrent, Convolutional et Self-Attention (restricted). Les colonnes présentent Layer Type, Complexity per Layer, Sequential Operations et Maximum Path Length. Les cellules contiennent notamment des expressions de complexité en notation O."
+    },
+    {
+      "visual_id": "9c16ee87e2175255cc45167f841b6c1f8678839b929c2a46514a8a93c44871c1",
+      "image_path": "data/processed/attention is all you need/tables/page_008_table_001.png",
+      "description_status": "pending",
+      "description": "Tableau comparant des modèles de traduction avec leurs scores BLEU et leurs coûts d'entraînement, indiqués en FLOPs. Les sous-colonnes distinguent EN-DE et EN-FR. Les lignes comprennent notamment ByteNet, GNMT + RL, ConvS2S, MoE et les variantes Transformer base model et big."
+    },
+    {
+      "visual_id": "6b5376167eedea2bbcf93b923c1c18c95d4f319e449b012782ee31cb45205fc7",
+      "image_path": "data/processed/attention is all you need/tables/page_009_table_001.png",
+      "description_status": "pending",
+      "description": "Tableau comparant les configurations base, les groupes de variations (A) à (E), et big. Les colonnes comprennent notamment N, d_model, d_ff, h, d_k, d_v, P_drop, epsilon_ls et train steps. Les résultats sont présentés dans les colonnes PPL (dev), BLEU (dev) et params × 10^6."
+    }
+  ]
+}
